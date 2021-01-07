@@ -5,7 +5,7 @@
 
   const page = selector("body");
   const app = selector("#app");
-  const apiURL = "http://www.mocky.io/v2/5dba690e3000008c00028eb6";
+  const apiURL = "https://www.mocky.io/v2/5dba690e3000008c00028eb6";
   const Login = create("div");
   const Logo = create("img");
   const Form = create("form");
