@@ -13,6 +13,7 @@
   const password = create("input");
   const button = create("button");
   const Loader = create("span");
+  const errorElement = create("span");
 
   Login.classList.add("login");
 
@@ -21,10 +22,10 @@
 
   email.type = "email";
   email.setAttribute("required", "required");
-  email.setAttribute('placeholder', "Entre com seu e-mail")
+  email.setAttribute("placeholder", "Entre com seu e-mail");
 
   password.type = "password";
-  password.setAttribute('placeholder', "Digite sua senha supersecreta")
+  password.setAttribute("placeholder", "Digite sua senha supersecreta");
 
   button.innerHTML = "Entrar";
   button.setAttribute("disabled", "disabled");
@@ -38,6 +39,9 @@
 
   app.appendChild(Logo);
   Login.appendChild(Form);
+
+  errorElement.classList.add("error-message");
+  errorElement.innerHTML = "Houve um erro na requisição";
 
   Form.onsubmit = async (e) => {
     e.preventDefault();
@@ -72,6 +76,11 @@
     showLoader();
     const data = fetch(apiURL)
       .then((response) => response)
+      .catch((err) => {
+        localStorage.removeItem('token')
+        Form.appendChild(errorElement)
+        removeLoader();
+      })
       .finally(() => {
         removeLoader();
       });
@@ -90,12 +99,21 @@
     const users = await fetch(localStorage.getItem("url"))
       .then((response) => response.json())
       .then((data) => data.url)
+      .catch(err => {
+        const appLogged = selector('#app')
+        errorElement.innerHTML += `erro: ${err}`
+        appLogged.appendChild(errorElement)
+      })
       .finally(() => {
         removeLoader();
       });
 
     const userList = await fetch(users)
       .then((response) => response.json())
+      .catch(err => {
+        const appLogged = selector('#app')
+        appLogged.appendChild(errorElement)
+      })
       .then((data) => data);
     return userList;
   }
