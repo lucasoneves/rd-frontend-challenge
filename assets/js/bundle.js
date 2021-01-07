@@ -3,17 +3,41 @@
   const create = (element) => document.createElement(element);
   let loading = false;
 
-  const page = selector('body')
+  const page = selector("body");
   const app = selector("#app");
-
+  const apiURL = "http://www.mocky.io/v2/5dba690e3000008c00028eb6";
   const Login = create("div");
+  const Logo = create("img");
+  const Form = create("form");
+  const email = create("input");
+  const password = create("input");
+  const button = create("button");
+  const Loader = create("span");
+
   Login.classList.add("login");
 
-  const Logo = create("img");
   Logo.src = "./assets/images/logo.svg";
   Logo.classList.add("logo");
 
-  const Form = create("form");
+  email.type = "email";
+  email.setAttribute("required", "required");
+  email.setAttribute('placeholder', "Entre com seu e-mail")
+
+  password.type = "password";
+  password.setAttribute('placeholder', "Digite sua senha supersecreta")
+
+  button.innerHTML = "Entrar";
+  button.setAttribute("disabled", "disabled");
+
+  Loader.classList.add("loader");
+  Loader.innerHTML = "Carregando...";
+
+  Form.appendChild(email);
+  Form.appendChild(password);
+  Form.appendChild(button);
+
+  app.appendChild(Logo);
+  Login.appendChild(Form);
 
   Form.onsubmit = async (e) => {
     e.preventDefault();
@@ -34,44 +58,23 @@
       : button.removeAttribute("disabled");
   };
 
-  const email = create("input");
-  email.type = "email";
-  email.setAttribute("required", "required");
-
-  const password = create("input");
-  password.type = "password";
-
-  const button = create("button");
-  button.innerHTML = "Entrar";
-  button.setAttribute("disabled", "disabled");
-
-  const Loader = create('span')
-  Loader.classList.add('loader')
-  Loader.innerHTML = 'Carregando...'
-
-  Form.appendChild(email);
-  Form.appendChild(password);
-  Form.appendChild(button);
-//   Form.appendChild(Loader)
-
-  app.appendChild(Logo);
-  Login.appendChild(Form);
+  //   Form.appendChild(Loader)
 
   const showLoader = () => {
-    page.appendChild(Loader)
-  }
+    page.appendChild(Loader);
+  };
 
   const removeLoader = () => {
-    Loader.classList.add('hidden')
-  }
+    Loader.classList.add("hidden");
+  };
 
   async function fakeAuthenticate(email, password) {
-    showLoader()
-    const data = fetch("http://www.mocky.io/v2/5dba690e3000008c00028eb6").then(
-      (response) => response
-    ).finally(() => {
-        removeLoader()
-    });
+    showLoader();
+    const data = fetch(apiURL)
+      .then((response) => response)
+      .finally(() => {
+        removeLoader();
+      });
     const fakeJwtToken = `${btoa(email + password)}.${btoa(data.url)}.${
       new Date().getTime() + 300000
     }`;
@@ -82,13 +85,13 @@
   }
 
   async function getDevelopersList(url) {
-    showLoader()
+    showLoader();
     localStorage.setItem("url", url);
     const users = await fetch(localStorage.getItem("url"))
       .then((response) => response.json())
       .then((data) => data.url)
       .finally(() => {
-        removeLoader()
+        removeLoader();
       });
 
     const userList = await fetch(users)
@@ -113,8 +116,6 @@
     Ul.classList.add("container");
     app.appendChild(Ul);
   }
-
-    
 
   // init
   (async function () {
